@@ -1,0 +1,29 @@
+version: '3.1'
+services:
+  web-app:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    entrypoint:
+      - sh
+      - -c
+      - |
+        sleep 5 # hacky solution to wait for pg
+        ./web-app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - pgdb
+  pgdb:
+    image: postgres:latest
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - psql-data:/var/lib/postgresql/data
+
+volumes:
+  psql-data:
+    driver: local
